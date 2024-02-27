@@ -1,0 +1,252 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #FFFFFF;
+}
+
+:root {
+    font-family: 'Inter';
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 16px;
+    --color-defaul: #3F8A29;
+    --color-primary: #081828;
+    --color-secondary: #FFFFFF;
+
+}
+
+
+
+
+/* Navsection starts here */
+.nav-menuIcon {
+    color: white;
+    font-size: 2rem;
+}
+
+.banner-section {
+    position: relative;
+    width: 100%;
+    background-color: black;
+    /* Set the background color to black */
+}
+
+.banner-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../assets/images/e1e5c5b26370f86a89e78a859ee7042e.jpeg');
+    /* Specify your background image */
+    background-size: cover;
+    object-fit: fill;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    /* Set the opacity of the background image */
+}
+
+.nav-main {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.nav-option {
+    color: var(--color-secondary);
+    text-decoration: none;
+    text-wrap: nowrap;
+
+}
+
+.nav-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-logo {
+    width: 72px;
+    height: 72px;
+    margin-right: 132px;
+}
+
+.nav-icons {
+    height: 30px;
+    width: 30px;
+}
+
+.nav-option:hover {
+    color: rgb(137, 133, 133);
+    transition: all 0.5s;
+}
+
+/* Navsection end here */
+
+/* Bannersection starts here */
+
+.banner-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.banner-img {
+    width: 200px;
+    margin-bottom: 20px;
+
+}
+
+.shop-now {
+    font-weight: 600;
+    font-size: 17;
+    padding: 5px 40px;
+    background-color: var(--color-defaul);
+    border: 0;
+    border-radius: 13px;
+}
+
+.banner-left p {
+    font-weight: 400;
+    font-size: 25px;
+
+}
+
+.banner-left {
+    width: 30%;
+}
+
+.banner-right img {
+    object-fit: cover;
+    width: 80%;
+}
+
+.banner-cnt {
+    position: relative;
+    top: 50px;
+}
+
+.banner-end {
+    background-color: var(--color-secondary);
+    display: flex;
+    gap: 20px;
+    padding: 15px;
+    margin-top: 70px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.banner-end-right p {
+    color: black !important;
+    font-weight: 500;
+    font-size: 16px;
+    padding: 20px;
+
+
+}
+
+.chef-img img {
+    object-fit: cover;
+    width: 358px;
+
+}
+
+.banner-end-left {
+    position: relative;
+}
+
+
+.chef-img {
+    position: absolute;
+    top: -70px;
+    left: 230px;
+}
+
+
+
+.banner-end-right {
+    display: flex;
+}
+
+.banner-top {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Bannersection end here */
+
+
+@media only screen and (max-width:807px) {
+    .banner-end-left-img {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width:768px) {
+    .banner-left {
+        width: 100%;
+    }
+
+    .banner-right {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width:752px) {
+    .chef-img img {
+        width: 238px;
+    }
+
+    .chef-img {
+        position: absolute;
+        left: 170px;
+        top: -40px;
+    }
+}
+
+@media only screen and (max-width:560px) {
+    .chef-img img {
+        width: 190px;
+    }
+
+    .chef-img {
+        position: absolute;
+        left: 120px;
+        top: -30px;
+    }
+}
+@media only screen and (max-width:547px) {
+    .chef-img img {
+        width: 220px;
+    }
+
+    .chef-img {
+        position: absolute;
+        left: 170px;
+        top: -30px;
+    }
+}
+
+
+@media only screen and (max-width:382px) {
+    .chef-img img {
+        width: 150px;
+    }
+
+    .chef-img {
+        position: absolute;
+        left: 80px;
+        top: -30px;
+    }
+    .banner-end-right p {
+        padding: 10px;
+
+    }
+}
