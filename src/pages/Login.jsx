@@ -1,14 +1,16 @@
-// src/pages/Login.jsx
-import React, { useState } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/user/Userhook";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const Login = () => {
-  const [loginError, setLoginError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { login, loginError, loading } = useLogin();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   // Yup validation schema
   const schema = yup.object().shape({
@@ -22,7 +24,6 @@ const Login = () => {
       .required("Password is required"),
   });
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -31,20 +32,24 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  // Form submission handler
+  // 🔹 Auto-redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/"); // or "/products" if that’s your home
+    }
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (loginError) {
+      toast.error(loginError);
+    }
+  }, [loginError]);
+
   const onSubmit = async (data) => {
-    setLoading(true);
-    setLoginError("");
-    
-    try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      // User successfully logged in
-      console.log("User logged in successfully");
-      // You can redirect or update state here
-    } catch (error) {
-      setLoginError(error.message);
-    } finally {
-      setLoading(false);
+    const result = await login(data.email, data.password);
+    if (result.success) {
+      toast.success("Login successful, redirecting...");
+      navigate("/"); // or "/products"
     }
   };
 
@@ -62,7 +67,6 @@ const Login = () => {
       {/* Right Side */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-10">
         <div className="max-w-md w-full space-y-6">
-          {/* Welcome Section */}
           <h2 className="text-2xl font-bold text-gray-900">Welcome Back!!</h2>
           <p className="text-sm text-gray-500">Please Login your Account</p>
 
@@ -103,7 +107,7 @@ const Login = () => {
             </div>
 
             {loginError && (
-              <p className="text-red-500 text-sm">{loginError}</p>
+              <p className="text-red-500 text-sm"></p>
             )}
 
             <button

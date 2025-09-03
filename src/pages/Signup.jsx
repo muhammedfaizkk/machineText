@@ -1,20 +1,19 @@
 // src/pages/Signup.jsx
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { 
-  createUserWithEmailAndPassword, 
-  updateProfile 
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { useSignup } from "../hooks/user/Userhook";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-  const [signupError, setSignupError] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  // Yup validation schema
+
+
+  const navigate = useNavigate();
+  const { signup, signupError, loading } = useSignup();
+
   const schema = yup.object().shape({
     fullName: yup
       .string()
@@ -51,39 +50,18 @@ const Signup = () => {
     resolver: yupResolver(schema),
   });
 
-  // Form submission handler
+  useEffect(() => {
+    if (signupError) {
+      toast.error(signupError);
+    }
+  }, [signupError]);
+
   const onSubmit = async (data) => {
-    setLoading(true);
-    setSignupError("");
-    
-    try {
-      // Create user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth, 
-        data.email, 
-        data.password
-      );
-      
-      // Update user profile with full name
-      await updateProfile(userCredential.user, {
-        displayName: data.fullName,
-      });
-      
-      // Save additional user data to Firestore
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        fullName: data.fullName,
-        email: data.email,
-        dateOfBirth: data.dateOfBirth,
-        mobile: data.mobile,
-        createdAt: new Date(),
-      });
-      
-      // User successfully created
-      console.log("User created successfully");
-    } catch (error) {
-      setSignupError(error.message);
-    } finally {
-      setLoading(false);
+    const result = await signup(data);
+    if (result.success) {
+      toast.success("User created successfully");
+      navigate("/login");
+
     }
   };
 

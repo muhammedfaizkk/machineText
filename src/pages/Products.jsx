@@ -7,12 +7,12 @@ import Footer from "../components/Footer";
 export default function Products() {
     return (
         <div className="min-h-screen flex flex-col">
-            <Navbar />
+          
             <Banner />
             <main className="flex-1 container mx-auto px-4 py-8">
                 <ProductGrid />
             </main>
-            <Footer />
+            
         </div>
     );
 }
