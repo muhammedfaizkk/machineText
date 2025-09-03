@@ -1,6 +1,92 @@
-import React from "react";
+// src/pages/Signup.jsx
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { 
+  createUserWithEmailAndPassword, 
+  updateProfile 
+} from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 const Signup = () => {
+  const [signupError, setSignupError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Yup validation schema
+  const schema = yup.object().shape({
+    fullName: yup
+      .string()
+      .required("Full name is required")
+      .min(2, "Full name must be at least 2 characters"),
+    email: yup
+      .string()
+      .email("Please enter a valid email")
+      .required("Email is required"),
+    dateOfBirth: yup
+      .date()
+      .required("Date of birth is required")
+      .max(new Date(), "Date of birth cannot be in the future"),
+    mobile: yup
+      .string()
+      .matches(/^[0-9]{10}$/, "Mobile number must be 10 digits")
+      .required("Mobile number is required"),
+    password: yup
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required("Please confirm your password"),
+  });
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  // Form submission handler
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setSignupError("");
+    
+    try {
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        data.email, 
+        data.password
+      );
+      
+      // Update user profile with full name
+      await updateProfile(userCredential.user, {
+        displayName: data.fullName,
+      });
+      
+      // Save additional user data to Firestore
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        fullName: data.fullName,
+        email: data.email,
+        dateOfBirth: data.dateOfBirth,
+        mobile: data.mobile,
+        createdAt: new Date(),
+      });
+      
+      // User successfully created
+      console.log("User created successfully");
+    } catch (error) {
+      setSignupError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen">
       {/* Left Side */}
@@ -31,10 +117,10 @@ const Signup = () => {
             Create an Account
           </h2>
           <p className="text-sm text-gray-500">
-            Are you ready to join us? Let’s create Account
+            Are you ready to join us? Let's create Account
           </p>
 
-          <form className="mt-6 space-y-4">
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm text-gray-700 mb-1">
                 Full name
@@ -43,7 +129,11 @@ const Signup = () => {
                 type="text"
                 placeholder="John Doe"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("fullName")}
               />
+              {errors.fullName && (
+                <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
+              )}
             </div>
 
             <div>
@@ -52,17 +142,25 @@ const Signup = () => {
                 type="email"
                 placeholder="admin@gmail.com"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("email")}
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
               <label className="block text-sm text-gray-700 mb-1">
-                Date Field
+                Date of Birth
               </label>
               <input
                 type="date"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("dateOfBirth")}
               />
+              {errors.dateOfBirth && (
+                <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth.message}</p>
+              )}
             </div>
 
             <div>
@@ -71,7 +169,11 @@ const Signup = () => {
                 type="tel"
                 placeholder="1234567891"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("mobile")}
               />
+              {errors.mobile && (
+                <p className="text-red-500 text-xs mt-1">{errors.mobile.message}</p>
+              )}
             </div>
 
             <div>
@@ -82,14 +184,38 @@ const Signup = () => {
                 type="password"
                 placeholder="********"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("password")}
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              )}
             </div>
+
+            <div>
+              <label className="block text-sm text-gray-700 mb-1">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                placeholder="********"
+                className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
+                {...register("confirmPassword")}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+
+            {signupError && (
+              <p className="text-red-500 text-sm">{signupError}</p>
+            )}
 
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
+              disabled={loading}
+              className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition disabled:opacity-50"
             >
-              Create Account
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 

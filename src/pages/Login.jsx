@@ -1,6 +1,53 @@
-import React from "react";
+// src/pages/Login.jsx
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase";
 
 const Login = () => {
+  const [loginError, setLoginError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Yup validation schema
+  const schema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Please enter a valid email")
+      .required("Email is required"),
+    password: yup
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+  });
+
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  // Form submission handler
+  const onSubmit = async (data) => {
+    setLoading(true);
+    setLoginError("");
+    
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      // User successfully logged in
+      console.log("User logged in successfully");
+      // You can redirect or update state here
+    } catch (error) {
+      setLoginError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex">
       {/* Left Side */}
@@ -15,22 +62,23 @@ const Login = () => {
       {/* Right Side */}
       <div className="w-full md:w-1/2 flex items-center justify-center p-10">
         <div className="max-w-md w-full space-y-6">
-          {/* Top Label */}
-          <p className="text-sm text-gray-600">Email</p>
-
           {/* Welcome Section */}
           <h2 className="text-2xl font-bold text-gray-900">Welcome Back!!</h2>
           <p className="text-sm text-gray-500">Please Login your Account</p>
 
           {/* Form */}
-          <form className="mt-6 space-y-4">
+          <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label className="block text-sm text-gray-700 mb-1">Email</label>
               <input
                 type="email"
                 placeholder="admin@gmail.com"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black"
+                {...register("email")}
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -39,7 +87,11 @@ const Login = () => {
                 type="password"
                 placeholder="********"
                 className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black"
+                {...register("password")}
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              )}
               <div className="flex justify-end mt-1">
                 <a
                   href="/forgot-password"
@@ -50,11 +102,16 @@ const Login = () => {
               </div>
             </div>
 
+            {loginError && (
+              <p className="text-red-500 text-sm">{loginError}</p>
+            )}
+
             <button
               type="submit"
-              className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition"
+              disabled={loading}
+              className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition disabled:opacity-50"
             >
-              Sign in
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
@@ -67,7 +124,7 @@ const Login = () => {
 
           {/* Sign-up */}
           <p className="text-center text-sm text-gray-600">
-            Didn’t have an account?{" "}
+            Didn't have an account?{" "}
             <a href="/signup" className="text-black font-medium hover:underline">
               Sign-up
             </a>
