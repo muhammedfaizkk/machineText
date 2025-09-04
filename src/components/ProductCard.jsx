@@ -3,7 +3,7 @@ import { FaHeart, FaStar } from "react-icons/fa";
 
 export default function ProductCard({ product }) {
   return (
-    <div className="relative border rounded-xl  shadow-sm hover:shadow-lg transition bg-white max-w-80">
+    <div className="relative border rounded-xl shadow-sm hover:shadow-lg hover:scale-105 transition-transform duration-200 bg-white w-full">
       {/* Wishlist Icon */}
       <div>
         <button className="absolute top-3 right-3 text-gray-500 hover:text-red-500">
@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
         <img
           src={product.image}
           alt={product.title}
-          className="w-full p-4 h-56 object-contain bg-[#F7F5F7]"
+          className="w-full p-4 h-56 rounded-xl object-contain bg-[#F7F5F7]"
         />
       </div>
 
@@ -42,7 +42,7 @@ export default function ProductCard({ product }) {
           </span>
         </div>
 
-        <div className="flex gap-2 mt-3">
+        <div className="flex flex-col sm:flex-row gap-2 mt-3">
           <button className="flex-1 bg-[#3A4980] text-white px-3 py-2 rounded-[15px] text-sm font-medium hover:bg-blue-700">
             Add To Cart
           </button>
@@ -50,8 +50,8 @@ export default function ProductCard({ product }) {
           <button className="flex-1 border px-3 py-2 rounded-[15px] text-sm font-medium hover:bg-gray-100">
             Add Shortlist
           </button>
-
         </div>
+
       </div>
     </div>
   );

@@ -7,8 +7,6 @@ export default function ProductGrid() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
 
@@ -19,20 +17,16 @@ export default function ProductGrid() {
         setProducts(res.data);
         setLoading(false);
       } catch (err) {
-        setError("Failed to fetch products");
+        setError("Failed to fetch products. Please try again.");
         setLoading(false);
       }
     };
     fetchProducts();
   }, []);
 
-  console.log(process.env.REACT_APP_API_URL);
-
-
   const filteredProducts = products.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase())
   );
-
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
@@ -42,41 +36,49 @@ export default function ProductGrid() {
   );
 
   return (
-    <section>
+    <section className="px-4 sm:px-6 lg:px-8">
       {/* Search */}
-      <div className="mb-6 text-center">
+      <div className="mb-6">
         <input
           type="text"
           placeholder="Search products..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setCurrentPage(1); // reset to page 1 on search
+            setCurrentPage(1);
           }}
-          className="w-full md:w-1/3 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-4 py-3 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-base"
         />
       </div>
 
+      {/* Loading and Error States */}
+      {loading && (
+        <p className="text-center text-gray-500">Loading products...</p>
+      )}
+      {error && (
+        <p className="text-center text-red-500">{error}</p>
+      )}
+
       {/* Products */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {currentProducts.length > 0 ? (
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+        {!loading && !error && currentProducts.length > 0 ? (
           currentProducts.map((p) => <ProductCard key={p.id} product={p} />)
         ) : (
-          <p className="col-span-full text-center text-gray-500">
-            No products found.
-          </p>
+          !loading && !error && (
+            <p className="col-span-full text-center text-gray-500">
+              No products found.
+            </p>
+          )
         )}
       </div>
 
-
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-6 space-x-2">
+        <div className="flex flex-wrap justify-center mt-6 gap-2">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 border rounded-md text-sm font-medium 
-                 disabled:opacity-50 disabled:cursor-not-allowed 
-                 hover:bg-gray-100"
+            className="px-4 py-2 text-sm font-medium border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 sm:px-5 sm:text-base"
           >
             Previous
           </button>
@@ -85,8 +87,8 @@ export default function ProductGrid() {
             <button
               key={idx}
               onClick={() => setCurrentPage(idx + 1)}
-              className={`px-4 py-2 border rounded-md text-sm font-medium 
-          ${currentPage === idx + 1
+              className={`px-3 py-2 text-sm font-medium border rounded-md sm:px-4 sm:text-base
+                ${currentPage === idx + 1
                   ? "bg-purple-100 text-purple-700 border-purple-300"
                   : "bg-white text-gray-700 hover:bg-gray-100"}`}
             >
@@ -97,15 +99,12 @@ export default function ProductGrid() {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border rounded-md text-sm font-medium 
-                 disabled:opacity-50 disabled:cursor-not-allowed 
-                 hover:bg-gray-100"
+            className="px-4 py-2 text-sm font-medium border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 sm:px-5 sm:text-base"
           >
             Next
           </button>
         </div>
       )}
-
     </section>
   );
 }
