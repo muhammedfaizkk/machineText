@@ -15,7 +15,7 @@ export default function ProductGrid() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get("https://fakestoreapi.com/products");
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}`);
         setProducts(res.data);
         setLoading(false);
       } catch (err) {
@@ -26,12 +26,14 @@ export default function ProductGrid() {
     fetchProducts();
   }, []);
 
-  
+  console.log(process.env.REACT_APP_API_URL);
+
+
   const filteredProducts = products.filter((p) =>
     p.title.toLowerCase().includes(search.toLowerCase())
   );
 
- 
+
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
   const startIndex = (currentPage - 1) * productsPerPage;
   const currentProducts = filteredProducts.slice(

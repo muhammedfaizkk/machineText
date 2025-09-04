@@ -3,13 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD47jlhDn3qNqvsv4bZryoPnU-mAQlQvCg",
-  authDomain: "fashionhub-8521a.firebaseapp.com",
-  projectId: "fashionhub-8521a",
-  storageBucket: "fashionhub-8521a.firebasestorage.app",
-  messagingSenderId: "354404581636",
-  appId: "1:354404581636:web:779aee5f498eb353495051",
-  measurementId: "G-THB90J3WVW"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 const app = initializeApp(firebaseConfig);

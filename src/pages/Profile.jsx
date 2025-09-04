@@ -13,7 +13,16 @@ const Profile = () => {
     window.location.href = "/login"; // Redirect to login
   };
 
+  // Handle loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        <p>Loading ...</p>
+      </div>
+    );
+  }
 
+  // Handle error state
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center text-red-600">

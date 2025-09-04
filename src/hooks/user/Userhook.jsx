@@ -6,10 +6,12 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase"; // Adjusted path if firebase.js is in src
+import { auth, db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 
-// ---------------- Signup Hook ----------------
+
+
+
 export const useSignup = () => {
   const [signupError, setSignupError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,15 +22,13 @@ export const useSignup = () => {
     setSignupError("");
 
     try {
-      // Step 1: Create user in Firebase Auth
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
-      console.log("✅ User created with UID:", userCredential.user.uid);
 
-      // Step 2: Update Firebase Auth profile
       await updateProfile(userCredential.user, {
         displayName: data.fullName,
       });
