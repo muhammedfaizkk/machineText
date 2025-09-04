@@ -9,7 +9,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const goToProfile = () => navigate("/profile");
-  const navigateToHome = () => navigate("/");
+  const navigateToHome = () => navigate("/products");
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-50">

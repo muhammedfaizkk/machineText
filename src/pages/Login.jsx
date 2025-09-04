@@ -49,7 +49,7 @@ const Login = () => {
     const result = await login(data.email, data.password);
     if (result.success) {
       toast.success("Login successful, redirecting...");
-      navigate("/");
+      navigate("/products");
     }
   };
 

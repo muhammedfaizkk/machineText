@@ -1,4 +1,3 @@
-// src/hooks/authHooks.js
 import { useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
@@ -9,20 +8,15 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import { useAuth } from "../../context/AuthContext";
 
-
-
-
 export const useSignup = () => {
   const [signupError, setSignupError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setUser } = useAuth();
 
   const signup = async (data) => {
     setLoading(true);
     setSignupError("");
 
     try {
-
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         data.email,
@@ -33,7 +27,7 @@ export const useSignup = () => {
         displayName: data.fullName,
       });
 
-      // Step 3: Create Firestore document
+      // Create Firestore document
       const userDocData = {
         fullName: data.fullName,
         email: data.email,
@@ -46,12 +40,11 @@ export const useSignup = () => {
         await setDoc(doc(db, "users", userCredential.user.uid), userDocData);
         console.log("✅ Firestore document created:", userDocData);
       } catch (firestoreError) {
-        // Rollback: Delete Firebase Auth user if Firestore fails
         await userCredential.user.delete();
         throw new Error("Failed to create user profile in Firestore");
       }
 
-      // Step 4: Prepare user object for context
+      // Do NOT set user in AuthContext
       const user = {
         uid: userCredential.user.uid,
         email: userCredential.user.email,
@@ -61,8 +54,6 @@ export const useSignup = () => {
         createdAt: new Date(),
       };
 
-      // Step 5: Update AuthContext
-      setUser(user);
       return { success: true, user };
     } catch (error) {
       console.error("❌ Signup error:", error);
@@ -76,7 +67,6 @@ export const useSignup = () => {
   return { signup, signupError, loading };
 };
 
-// ---------------- Login Hook ----------------
 export const useLogin = () => {
   const [loginError, setLoginError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -87,19 +77,16 @@ export const useLogin = () => {
     setLoginError("");
 
     try {
-      // Step 1: Firebase Auth login
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const uid = userCredential.user.uid;
       console.log("✅ User logged in with UID:", uid);
 
-      // Step 2: Fetch Firestore data
       const userDoc = await getDoc(doc(db, "users", uid));
       let extraData = {};
       if (userDoc.exists()) {
         extraData = userDoc.data();
         console.log("✅ Firestore data retrieved:", extraData);
       } else {
-        // Create default document if it doesn't exist
         extraData = {
           fullName: userCredential.user.displayName || "",
           email: userCredential.user.email,
@@ -111,7 +98,6 @@ export const useLogin = () => {
         console.log("✅ Created default Firestore document:", extraData);
       }
 
-      // Step 3: Merge Auth and Firestore data
       const user = {
         uid,
         email: userCredential.user.email,
@@ -119,12 +105,9 @@ export const useLogin = () => {
         ...extraData,
       };
 
-      // Step 4: Update AuthContext (no localStorage)
-      setUser(user);
-      console.log("✅ User data set in context:", user);
+      setUser(user); // Set user only on login
       return { success: true, user };
     } catch (error) {
-      console.error("❌ Login error:", error);
       setLoginError(error.message);
       return { success: false, error: error.message };
     } finally {
@@ -135,7 +118,6 @@ export const useLogin = () => {
   return { login, loginError, loading };
 };
 
-// ---------------- User Data Hook ----------------
 export const useUserData = () => {
   const { user, loading: authLoading } = useAuth();
   const [userData, setUserData] = useState(null);
@@ -150,12 +132,10 @@ export const useUserData = () => {
       }
 
       if (!user || !user.uid) {
-        console.log("❌ No user or UID found:", user);
+        console.log(" No user or UID found:", user);
         setLoading(false);
         return;
       }
-
-      console.log("👤 Fetching data for UID:", user.uid);
 
       try {
         const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -163,7 +143,6 @@ export const useUserData = () => {
           console.log("✅ Firestore data retrieved:", userDoc.data());
           setUserData(userDoc.data());
         } else {
-          // Create default document
           const defaultData = {
             fullName: user.displayName || "",
             email: user.email || "",

@@ -25,13 +25,11 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Routes>
-          {/* Public routes without Navbar/Footer */}
+
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-
-          {/* Protected routes with Navbar/Footer */}
           <Route
-            path="/"
+            path="/products"
             element={
               <ProtectedRoute>
                 <Layout>
@@ -52,7 +50,7 @@ function App() {
           />
         </Routes>
 
-   
+
         <Toaster position="top-center" reverseOrder={false} />
       </BrowserRouter>
     </div>

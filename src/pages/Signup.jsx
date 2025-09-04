@@ -1,4 +1,3 @@
-// src/pages/Signup.jsx
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,6 +5,8 @@ import * as yup from "yup";
 import { useSignup } from "../hooks/user/Userhook";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebase";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -49,10 +50,15 @@ const Signup = () => {
   }, [signupError]);
 
   const onSubmit = async (data) => {
+    console.log("Submitting signup form with data:", data);
     const result = await signup(data);
     if (result.success) {
+      console.log("Signup successful, navigating to /login");
       toast.success("User created successfully");
+      await signOut(auth);
       navigate("/login");
+    } else {
+      console.log("Signup failed:", result.error);
     }
   };
 
