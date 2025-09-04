@@ -8,9 +8,6 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Signup = () => {
-
-
-
   const navigate = useNavigate();
   const { signup, signupError, loading } = useSignup();
 
@@ -35,13 +32,8 @@ const Signup = () => {
       .string()
       .min(6, "Password must be at least 6 characters")
       .required("Password is required"),
-    confirmPassword: yup
-      .string()
-      .oneOf([yup.ref("password"), null], "Passwords must match")
-      .required("Please confirm your password"),
   });
 
-  // React Hook Form setup
   const {
     register,
     handleSubmit,
@@ -61,7 +53,6 @@ const Signup = () => {
     if (result.success) {
       toast.success("User created successfully");
       navigate("/login");
-
     }
   };
 
@@ -89,7 +80,7 @@ const Signup = () => {
       </div>
 
       {/* Right Side */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-10">
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-10 overflow-y-auto">
         <div className="max-w-md w-full space-y-6 my-8">
           <h2 className="text-2xl font-bold text-gray-900">
             Create an Account
@@ -110,7 +101,9 @@ const Signup = () => {
                 {...register("fullName")}
               />
               {errors.fullName && (
-                <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.fullName.message}
+                </p>
               )}
             </div>
 
@@ -123,7 +116,9 @@ const Signup = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -137,7 +132,9 @@ const Signup = () => {
                 {...register("dateOfBirth")}
               />
               {errors.dateOfBirth && (
-                <p className="text-red-500 text-xs mt-1">{errors.dateOfBirth.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.dateOfBirth.message}
+                </p>
               )}
             </div>
 
@@ -150,7 +147,9 @@ const Signup = () => {
                 {...register("mobile")}
               />
               {errors.mobile && (
-                <p className="text-red-500 text-xs mt-1">{errors.mobile.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.mobile.message}
+                </p>
               )}
             </div>
 
@@ -165,22 +164,9 @@ const Signup = () => {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-700 mb-1">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                placeholder="********"
-                className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-black focus:outline-none"
-                {...register("confirmPassword")}
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
@@ -199,10 +185,7 @@ const Signup = () => {
 
           <p className="text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <a
-              href="/login"
-              className="text-black font-medium hover:underline"
-            >
+            <a href="/login" className="text-black font-medium hover:underline">
               Sign-in
             </a>
           </p>

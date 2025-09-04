@@ -1,7 +1,7 @@
-// src/context/AuthContext.js
 import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -9,7 +9,6 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    // Load from localStorage first (for instant UI)
     const storedUser = localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
@@ -17,14 +16,23 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Sync with Firebase auth state
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
+        // fetch extra fields from Firestore
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+
+        let extraData = {};
+        if (userDoc.exists()) {
+          extraData = userDoc.data();
+        }
+
         const formattedUser = {
           uid: currentUser.uid,
           email: currentUser.email,
           displayName: currentUser.displayName,
+          ...extraData, // this brings mobile & dateOfBirth
         };
+
         setUser(formattedUser);
         localStorage.setItem("user", JSON.stringify(formattedUser));
       } else {

@@ -68,7 +68,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Dropdown */}
+
       {menuOpen && (
         <div className="md:hidden bg-white shadow-md px-6 pb-4 space-y-3 animate-fadeIn">
           <a href="#" className="block text-gray-700 hover:text-blue-600 transition">Category</a>

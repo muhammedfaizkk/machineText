@@ -32,10 +32,10 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
-  // 🔹 Auto-redirect if already logged in
+  // Auto-redirect if already logged in
   useEffect(() => {
     if (user) {
-      navigate("/"); // or "/products" if that’s your home
+      navigate("/"); // or "/products"
     }
   }, [user, navigate]);
 
@@ -49,13 +49,13 @@ const Login = () => {
     const result = await login(data.email, data.password);
     if (result.success) {
       toast.success("Login successful, redirecting...");
-      navigate("/"); // or "/products"
+      navigate("/");
     }
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side */}
+    <div className="flex max-h-screen">
+      {/* Left Side (fixed image) */}
       <div className="hidden md:flex w-1/2 bg-gray-100">
         <img
           src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d"
@@ -64,11 +64,11 @@ const Login = () => {
         />
       </div>
 
-      {/* Right Side */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-10">
-        <div className="max-w-md w-full space-y-6">
+      {/* Right Side (scrollable form) */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-10 overflow-y-auto">
+        <div className="max-w-md w-full space-y-6 my-8">
           <h2 className="text-2xl font-bold text-gray-900">Welcome Back!!</h2>
-          <p className="text-sm text-gray-500">Please Login your Account</p>
+          <p className="text-sm text-gray-500">Please login to your account</p>
 
           {/* Form */}
           <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -81,7 +81,9 @@ const Login = () => {
                 {...register("email")}
               />
               {errors.email && (
-                <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -94,7 +96,9 @@ const Login = () => {
                 {...register("password")}
               />
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.password.message}
+                </p>
               )}
               <div className="flex justify-end mt-1">
                 <a
@@ -107,7 +111,7 @@ const Login = () => {
             </div>
 
             {loginError && (
-              <p className="text-red-500 text-sm"></p>
+              <p className="text-red-500 text-sm">{loginError}</p>
             )}
 
             <button
@@ -128,8 +132,11 @@ const Login = () => {
 
           {/* Sign-up */}
           <p className="text-center text-sm text-gray-600">
-            Didn't have an account?{" "}
-            <a href="/signup" className="text-black font-medium hover:underline">
+            Don’t have an account?{" "}
+            <a
+              href="/signup"
+              className="text-black font-medium hover:underline"
+            >
               Sign-up
             </a>
           </p>
